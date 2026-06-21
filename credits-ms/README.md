@@ -179,7 +179,8 @@ O Flyway aplica as migrations automaticamente na primeira execução.
 
 ### Exemplo de requisição
 
-```json
+```
+json
 POST /api/v1/credits
 Content-Type: application/json
 
