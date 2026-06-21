@@ -34,14 +34,20 @@ Cliente
 │   credito-ms     │──────▶│   RabbitMQ    │──────▶│   score-ms    │
 │                  │        │ (topic exchange)      │ (em construção)
 │  - API Handler   │        └──────────────┘        └──────────────┘
-│  - Outbox Worker │                │
-│  - Status machine│                ▼
-└─────────────────┘        credit.approved /
-        ▲                  credit.rejected
-        │                          │
-        └──────────────────────────┘
-        (credito-ms consome de volta
-         e atualiza o status)
+│  - Outbox Worker │                │                       │
+│  - Status machine│                │                       ▼
+└─────────────────┘                │             credit.approved /
+        ▲                          │             credit.rejected
+        │                          │                       │
+        └──────────────────────────┴───────────────────────┤
+        (credito-ms consome de volta                       ▼
+         e atualiza o status)                    ┌──────────────────┐
+                                                  │  notification-ms  │
+                                                  │  (em construção)  │
+                                                  │                    │
+                                                  │  - Consumidor puro │
+                                                  │  - Notifica cliente│
+                                                  └──────────────────┘
 ```
 
 ---
@@ -178,11 +184,11 @@ POST /api/v1/credits
 Content-Type: application/json
 
 {
-  "cpf": "935.411.347-80",
-  "name": "José Mota",
-  "income": 5000.00,
-  "valueRequest": 20000.00,
-  "termMonths": 24
+"cpf": "935.411.347-80",
+"name": "José Mota",
+"income": 5000.00,
+"valueRequest": 20000.00,
+"termMonths": 24
 }
 ```
 
