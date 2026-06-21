@@ -1,4 +1,12 @@
-# Credito-ms
+# credito-ms
+
+![Java](https://img.shields.io/badge/Java-26-ED8B00?style=flat&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.6-6DB33F?style=flat&logo=springboot&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-4169E1?style=flat&logo=postgresql&logoColor=white)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-FF6600?style=flat&logo=rabbitmq&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-C71A36?style=flat&logo=apachemaven&logoColor=white)
 
 Microsserviço de análise de crédito, parte de um sistema de Arquitetura Orientada a Eventos (EDA). Responsável por receber solicitações de crédito, persistir a solicitação de forma transacional e publicar eventos para os demais serviços do sistema através do RabbitMQ.
 
@@ -25,30 +33,9 @@ Este projeto foi construído como portfólio para vagas de desenvolvedor Java Jr
 
 O `credito-ms` é o serviço produtor e consumidor central do sistema. Ele recebe a solicitação via REST, persiste no banco e publica um evento `credito.solicitado` no RabbitMQ usando o **Outbox Pattern**, garantindo que a publicação do evento nunca seja perdida mesmo em caso de falha de rede.
 
-```
-Cliente
-   │
-   │ POST /api/v1/credits
-   ▼
-┌─────────────────┐        ┌──────────────┐        ┌──────────────┐
-│   credito-ms     │──────▶│   RabbitMQ    │──────▶│   score-ms    │
-│                  │        │ (topic exchange)      │ (em construção)
-│  - API Handler   │        └──────────────┘        └──────────────┘
-│  - Outbox Worker │                │                       │
-│  - Status machine│                │                       ▼
-└─────────────────┘                │             credit.approved /
-        ▲                          │             credit.rejected
-        │                          │                       │
-        └──────────────────────────┴───────────────────────┤
-        (credito-ms consome de volta                       ▼
-         e atualiza o status)                    ┌──────────────────┐
-                                                  │  notification-ms  │
-                                                  │  (em construção)  │
-                                                  │                    │
-                                                  │  - Consumidor puro │
-                                                  │  - Notifica cliente│
-                                                  └──────────────────┘
-```
+![Diagrama de arquitetura EDA do sistema de análise de crédito](docs/architecture.png)
+
+> O diagrama completo do sistema, incluindo `score-ms` e `notification-ms` (em construção), está disponível em [`docs/architecture.png`](docs/architecture.png).
 
 ---
 
@@ -179,17 +166,16 @@ O Flyway aplica as migrations automaticamente na primeira execução.
 
 ### Exemplo de requisição
 
-```
-json
+```json
 POST /api/v1/credits
 Content-Type: application/json
 
 {
-"cpf": "935.411.347-80",
-"name": "José Mota",
-"income": 5000.00,
-"valueRequest": 20000.00,
-"termMonths": 24
+  "cpf": "935.411.347-80",
+  "name": "José Mota",
+  "income": 5000.00,
+  "valueRequest": 20000.00,
+  "termMonths": 24
 }
 ```
 
