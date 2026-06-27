@@ -1,6 +1,6 @@
 package dev.mota.credits_ms.listener;
 
-import dev.mota.credits_ms.Event.consumed.CreditApprovedEvent;
+import dev.mota.credits_ms.event.consumed.CreditApprovedEvent;
 import dev.mota.credits_ms.config.RabbitMQConfig;
 import dev.mota.credits_ms.services.CreditRequestService;
 import lombok.RequiredArgsConstructor;

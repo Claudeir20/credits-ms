@@ -1,7 +1,7 @@
 package dev.mota.credits_ms.services;
 
-import dev.mota.credits_ms.Event.consumed.CreditApprovedEvent;
-import dev.mota.credits_ms.Event.consumed.CreditRejectEvent;
+import dev.mota.credits_ms.event.consumed.CreditApprovedEvent;
+import dev.mota.credits_ms.event.consumed.CreditRejectEvent;
 import dev.mota.credits_ms.dto.CreditRequestDTO;
 import dev.mota.credits_ms.dto.CreditRequestResponseDTO;
 import dev.mota.credits_ms.mapper.CreditRequestMapper;

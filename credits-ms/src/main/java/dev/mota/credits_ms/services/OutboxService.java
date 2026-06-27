@@ -2,7 +2,7 @@ package dev.mota.credits_ms.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.mota.credits_ms.Event.produced.CreditRequestedEvent;
+import dev.mota.credits_ms.event.produced.CreditRequestedEvent;
 import dev.mota.credits_ms.config.RabbitMQConfig;
 import dev.mota.credits_ms.model.CreditRequest;
 import dev.mota.credits_ms.model.OutboxEvent;

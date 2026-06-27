@@ -1,9 +1,8 @@
-package dev.mota.credits_ms.Event.produced;
+package dev.mota.credits_ms.event.produced;
 
 import dev.mota.credits_ms.model.CreditRequest;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 

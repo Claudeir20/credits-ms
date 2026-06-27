@@ -1,4 +1,4 @@
-package dev.mota.credits_ms.Event.consumed;
+package dev.mota.credits_ms.event.consumed;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
