@@ -1,7 +1,7 @@
 package dev.mota.credits_ms.services;
 
 import dev.mota.credits_ms.event.consumed.CreditApprovedEvent;
-import dev.mota.credits_ms.event.consumed.CreditRejectEvent;
+import dev.mota.credits_ms.event.consumed.CreditRejectedEvent;
 import dev.mota.credits_ms.dto.CreditRequestDTO;
 import dev.mota.credits_ms.dto.CreditRequestResponseDTO;
 import dev.mota.credits_ms.mapper.CreditRequestMapper;
@@ -10,6 +10,7 @@ import dev.mota.credits_ms.repository.CreditRepository;
 import dev.mota.credits_ms.vo.Cpf;
 import dev.mota.credits_ms.vo.Income;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class CreditRequestService {
     private final CreditRepository repository;
     private final CreditRequestMapper mapper;
     private final OutboxService outboxService;
+    private final CacheManager cacheManager;
 
     @Transactional
     @CacheEvict(value = "solicitacoes", key = "#requestDTO.cpf()")    public CreditRequestResponseDTO requestCredit(CreditRequestDTO requestDTO){
@@ -53,22 +55,31 @@ public class CreditRequestService {
 
         repository.save(creditRequest);
 
-        evitCache(creditRequest.getCpf().value());
+        evictCaches(creditRequest);
     }
 
-    @CacheEvict(value = "solicitacoes", key = "#cpf")
-    public void evitCache(String cpf){
 
-    }
-
-    public void rejectFromCreditRejectedEvent(CreditRejectEvent event){
+    @Transactional
+    public void rejectFromCreditRejectedEvent(CreditRejectedEvent event){
         CreditRequest creditRequest = repository.findById(event.requestId())
                 .orElseThrow(() -> new IllegalArgumentException("Request not found"));
 
         creditRequest.reject();
 
         repository.save(creditRequest);
-        evitCache(creditRequest.getCpf().value());
+        evictCaches(creditRequest);
+    }
+
+    private void evictCaches(CreditRequest creditRequest) {
+        var byCpf = cacheManager.getCache("solicitacoes");
+        if (byCpf != null) {
+            byCpf.evictIfPresent(creditRequest.getCpf().value());
+        }
+
+        var byId = cacheManager.getCache("solicitacoes_por_id");
+        if (byId != null) {
+            byId.evictIfPresent(creditRequest.getId());
+        }
     }
 
     @Cacheable(value = "solicitacoes_por_id", key = "#id")
