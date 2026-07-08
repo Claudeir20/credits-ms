@@ -1,6 +1,5 @@
 package dev.mota.credits_ms.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -8,19 +7,13 @@ import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
-import org.springframework.amqp.support.converter.MessageConverter;@Configuration
+
+@Configuration
 public class RabbitMQConfig {
 
     public static final String CREDIT_EXCHANGE = "credit.exchange";
-    public static final String CREDIT_APPROVED_EXCHANGE = "credit.aproved.exchange";
-    public static final String CREDIT_REJECTED_EXCHANGE = "credit.reject.exchange";
 
 
-    public static final String CREDIT_REQUESTED_QUEUE = "credit.requested.queue";
     public static final String CREDIT_APPROVED_QUEUE = "credit.approved.queue";
     public static final String CREDIT_REJECTED_QUEUE = "credit.rejected.queue";
     public static final String SCORE_CREDIT_APPROVED_QUEUE = "score.credit.approved.queue";
@@ -31,6 +24,11 @@ public class RabbitMQConfig {
     public static final String CREDIT_APPROVED_ROUTING_KEY = "credit.approved";
     public static final String CREDIT_REJECTED_ROUTING_KEY = "credit.rejected";
 
+    public static final String CREDIT_DLX = "credit.dlx";
+    public static final String CREDIT_DLQ = "credit.dlq";
+    public static final String CREDIT_DLQ_ROUTING_KEY = "credit.dlq";
+
+
 
     @Bean
     public TopicExchange creditExchange(){
@@ -38,20 +36,16 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public TopicExchange creditApprovedExchange(){
-        return new TopicExchange(CREDIT_APPROVED_EXCHANGE);
-    }
-
-    @Bean
-    public TopicExchange creditRejectedExchange(){
-        return new TopicExchange(CREDIT_REJECTED_EXCHANGE);
+    public DirectExchange deadLetterExchange(){
+        return new DirectExchange(CREDIT_DLX);
     }
 
 
     @Bean
-    public Queue creditRequestedQueue(){
-        return QueueBuilder.durable(CREDIT_REQUESTED_QUEUE).build();
+    public Queue creditDlq(){
+        return QueueBuilder.durable(CREDIT_DLQ).build();
     }
+
 
     @Bean
     public Queue creditApprovedQueue(){
@@ -65,31 +59,35 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue scoreCreditApprovedQueue() {
-        return QueueBuilder.durable(SCORE_CREDIT_APPROVED_QUEUE).build();
+        return QueueBuilder.durable(SCORE_CREDIT_APPROVED_QUEUE)
+                .deadLetterExchange(CREDIT_DLX)
+                .deadLetterRoutingKey(CREDIT_DLQ_ROUTING_KEY)
+                .build();
     }
 
     @Bean
     public Queue scoreCreditRejectedQueue() {
-        return QueueBuilder.durable(SCORE_CREDIT_REJECTED_QUEUE).build();
+        return QueueBuilder.durable(SCORE_CREDIT_REJECTED_QUEUE)
+                .deadLetterExchange(CREDIT_DLX)
+                .deadLetterRoutingKey(CREDIT_DLQ_ROUTING_KEY)
+                .build();
     }
 
 
 
-
     @Bean
-    public Binding creditRequestedBing(
-            Queue creditRequestedQueue,
-            TopicExchange creditExchange
+    public Binding creditDlqBinding(
+            Queue creditDlq,
+            DirectExchange deadLetterExchange
     ){
         return BindingBuilder
-                .bind(creditRequestedQueue)
-                .to(creditExchange)
-                .with(CREDIT_REQUESTED_ROUTING_KEY);
-
+                .bind(creditDlq)
+                .to(deadLetterExchange)
+                .with(CREDIT_DLQ_ROUTING_KEY);
     }
 
     @Bean
-    public Binding creditApprovedBing(
+    public Binding creditApprovedBinding(
             Queue creditApprovedQueue,
             TopicExchange creditExchange
     ){
@@ -101,7 +99,7 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Binding creditRejectedBing(
+    public Binding creditRejectedBinding(
             Queue creditRejectedQueue,
             TopicExchange creditExchange
     ){
