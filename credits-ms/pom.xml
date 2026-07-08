@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>dev.mota</groupId>
-	<artifactId>order-ms</artifactId>
+	<artifactId>credits-ms</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name>credits-ms</name>
+	<description>Credit request microservice built with Spring Boot, PostgreSQL, RabbitMQ, Redis and the Outbox Pattern.</description>
 	<url/>
 	<licenses>
 		<license/>
