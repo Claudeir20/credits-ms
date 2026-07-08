@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -28,9 +29,9 @@ public class OutboxService {
 
     @Transactional
     public void saveEvent(CreditRequest entity) {
-        var event = CreditRequestedEvent.from(entity);
+        CreditRequestedEvent event = CreditRequestedEvent.from(entity);
 
-        var outbox = OutboxEvent.builder()
+        OutboxEvent outbox = OutboxEvent.builder()
                 .id(UUID.randomUUID())
                 .aggregateId(entity.getId())
                 .eventType(RabbitMQConfig.CREDIT_REQUESTED_ROUTING_KEY)
@@ -48,7 +49,7 @@ public class OutboxService {
     @Scheduled(fixedDelay = 5000)
     @Transactional
     public void publishPending() {
-        var pending = outboxRepository.findByPublishedFalse();
+        List<OutboxEvent> pending = outboxRepository.findByPublishedFalse();
 
         if (pending.isEmpty()) return;
 
