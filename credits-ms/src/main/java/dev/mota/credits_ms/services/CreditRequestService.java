@@ -1,5 +1,6 @@
 package dev.mota.credits_ms.services;
 
+import dev.mota.credits_ms.enums.Status;
 import dev.mota.credits_ms.event.consumed.CreditApprovedEvent;
 import dev.mota.credits_ms.event.consumed.CreditRejectedEvent;
 import dev.mota.credits_ms.dto.CreditRequestDTO;
@@ -51,6 +52,10 @@ public class CreditRequestService {
         CreditRequest creditRequest = repository.findById(event.requestId())
                 .orElseThrow(() -> new IllegalArgumentException("Request not found"));
 
+        if (creditRequest.getStatus() == Status.APPROVED){
+            return;
+        }
+
         creditRequest.approve();
 
         repository.save(creditRequest);
@@ -63,6 +68,10 @@ public class CreditRequestService {
     public void rejectFromCreditRejectedEvent(CreditRejectedEvent event){
         CreditRequest creditRequest = repository.findById(event.requestId())
                 .orElseThrow(() -> new IllegalArgumentException("Request not found"));
+
+        if (creditRequest.getStatus() == Status.REJECTED){
+            return;
+        }
 
         creditRequest.reject();
 
