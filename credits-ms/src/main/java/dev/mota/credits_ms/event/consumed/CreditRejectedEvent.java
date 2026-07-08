@@ -6,6 +6,9 @@ import java.util.UUID;
 public record CreditRejectedEvent(
         UUID eventId,
         UUID requestId,
+        String name,
+        String email,
+        UUID correlationId,
         LocalDateTime occurred
 ) {
 }

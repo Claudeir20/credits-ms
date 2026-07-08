@@ -16,6 +16,7 @@ public class CreditRequestMapper {
         return new CreditRequestResponseDTO(
                 entity.getId(),
                 entity.getName(),
+                entity.getEmail(),
                 entity.getCpf().toString(),
                 entity.getIncome().value(),
                 entity.getValueRequest(),
@@ -30,6 +31,7 @@ public class CreditRequestMapper {
         return CreditRequest.request(
                 new Cpf(dto.cpf()),
                 dto.name(),
+                dto.email(),
                 new Income(dto.income()),
                 dto.valueRequest(),
                 dto.termMonths()

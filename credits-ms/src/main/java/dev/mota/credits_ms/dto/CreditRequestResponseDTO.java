@@ -7,6 +7,7 @@ import java.util.UUID;
 public record CreditRequestResponseDTO(
         UUID id,
         String name,
+        String email,
         String cpf,
         BigDecimal income,
         BigDecimal valueRequest,

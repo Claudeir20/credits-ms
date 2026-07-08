@@ -17,6 +17,7 @@ class CreditRequestTest {
         CreditRequest request = CreditRequest.request(
                 new Cpf("935.411.347-80"),
                 "Jose Mota",
+                "jose@email.com",
                 new Income(new BigDecimal("5000.00")),
                 new BigDecimal("20000.00"),
                 24
@@ -37,6 +38,7 @@ class CreditRequestTest {
             CreditRequest.request(
                     new Cpf("935.411.347-80"),
                     "",
+                    "jose@email.com",
                     new Income(new BigDecimal("5000.00")),
                     new BigDecimal("20000.00"),
                     24
@@ -51,6 +53,7 @@ class CreditRequestTest {
             CreditRequest.request(
                     new Cpf("935.411.347-80"),
                     "Jose Mota",
+                    "jose@email.com",
                     new Income(new BigDecimal("5000.00")),
                     new BigDecimal("60000.00"),
                     24
@@ -63,6 +66,7 @@ class CreditRequestTest {
         CreditRequest request = CreditRequest.request(
                 new Cpf("935.411.347-80"),
                 "Jose Mota",
+                "jose@email.com",
                 new Income(new BigDecimal("5000.00")),
                 new BigDecimal("50000.00"),
                 24
@@ -79,6 +83,7 @@ class CreditRequestTest {
         CreditRequest request = CreditRequest.request(
                 new Cpf("935.411.347-80"),
                 "Jose Mota",
+                "jose@email.com",
                 new Income(new BigDecimal("5000.00")),
                 new BigDecimal("20000.00"),
                 24

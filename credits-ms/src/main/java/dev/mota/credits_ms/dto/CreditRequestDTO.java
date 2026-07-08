@@ -8,6 +8,10 @@ public record CreditRequestDTO(
         @NotBlank(message = "Name is required")
         String name,
 
+        @NotBlank(message = "Email is required")
+        @Email(message = "Email format is invalid")
+        String email,
+
         @NotBlank(message = "CPF is required")
         @Pattern(regexp = "\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}", message = "CPF format is invalid")
         String cpf,

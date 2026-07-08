@@ -25,6 +25,9 @@ public class CreditRequest {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private String email;
+
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "income", nullable = false, precision = 15, scale = 2))
     private Income income;
@@ -47,12 +50,13 @@ public class CreditRequest {
 
     protected CreditRequest() {}
 
-    private CreditRequest(UUID id, Cpf cpf, String name, Income income,
+    private CreditRequest(UUID id, Cpf cpf, String name, String email, Income income,
                           BigDecimal valueRequest, int termMonths, Status status,
                           UUID correlationId, LocalDateTime createdAt) {
         this.id = id;
         this.cpf = cpf;
         this.name = name;
+        this.email = email;
         this.income = income;
         this.valueRequest = valueRequest;
         this.termMonths = termMonths;
@@ -60,10 +64,14 @@ public class CreditRequest {
         this.correlationId = correlationId;
         this.createdAt = createdAt;
     }
-    public static CreditRequest request(Cpf cpf, String name, Income income, BigDecimal valueRequest, int termMonths) {
+    public static CreditRequest request(Cpf cpf, String name, String email, Income income, BigDecimal valueRequest, int termMonths) {
 
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Name is required");
+        }
+
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("Email is required");
         }
 
         if (valueRequest == null) {
@@ -86,6 +94,7 @@ public class CreditRequest {
                 UUID.randomUUID(),
                 cpf,
                 name,
+                email,
                 income,
                 valueRequest,
                 termMonths,

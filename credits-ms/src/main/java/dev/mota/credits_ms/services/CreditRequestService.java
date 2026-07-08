@@ -35,6 +35,7 @@ public class CreditRequestService {
         CreditRequest creditRequest = CreditRequest.request(
                 new Cpf(requestDTO.cpf()),
                 requestDTO.name(),
+                requestDTO.email(),
                 new Income(requestDTO.income()),
                 requestDTO.valueRequest(),
                 requestDTO.termMonths()
